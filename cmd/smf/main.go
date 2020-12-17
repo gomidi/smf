@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"os"
 
+	"gitlab.com/gomidi/smf"
 	. "gitlab.com/metakeule/config"
 )
 
-var CONFIG = MustNew("smf", "0.0.1", "tools to deal with SMF/MIDI files")
+var CONFIG = MustNew("smf", smf.VERSION, "tools to deal with SMF/MIDI files")
 
 func main() {
 	err := run()

@@ -2,9 +2,12 @@
 
 Various tools to deal with Standard MIDI Files (SMF).
 
+Note: If you are reading this on Github, please note that the repo has moved to Gitlab (gitlab.com/gomidi/smf) and this is only a mirror.
+
+
 ## Installation
 
-    go get -u github.com/gomidi/smf/cmd/smf
+    go get -u gitlab.com/gomidi/smf/cmd/smf
 
 ## Usage
 
