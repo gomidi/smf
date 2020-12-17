@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	"gitlab.com/gomidi/midi"
+	"gitlab.com/gomidi/midi/filter"
 	"gitlab.com/gomidi/midi/midimessage/channel"
 	"gitlab.com/gomidi/midi/midimessage/meta"
 	"gitlab.com/gomidi/midi/reader"
@@ -21,7 +22,7 @@ type file struct {
 	tracks            []*track
 	originalTempi     tempi
 	realTempi         tempi
-	metronomeDetector Filter
+	metronomeDetector filter.Filter
 }
 
 // newFile returns a new file.
@@ -31,7 +32,7 @@ func newFile(filePath string, opts ...Option) *file {
 	f := &file{
 		filePath:          filePath,
 		metronomeTrackno:  0,
-		metronomeDetector: NoteOnFilter(-1),
+		metronomeDetector: filter.NoteOn(-1),
 	}
 
 	for _, opt := range opts {

@@ -3,3 +3,4 @@ cmd/smf/smf.exe
 .coverage.txt
 cover.out
 cmd/smf/artifacts
+*.zip

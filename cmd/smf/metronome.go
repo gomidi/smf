@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"gitlab.com/gomidi/midi/filter"
 	. "gitlab.com/gomidi/smf/metronome"
 	"gitlab.com/metakeule/config"
 )
@@ -45,28 +46,28 @@ func (s metro) setTempo() error {
 	opts = append(opts, OptionTrack(int16(s.trackNo.Get())))
 
 	// default: all channels
-	var chFilter = ChannelFilter(-1)
+	var chFilter = filter.Channel(-1)
 
 	if s.channel.IsSet() {
-		chFilter = ChannelFilter(int8(s.channel.Get()))
+		chFilter = filter.Channel(int8(s.channel.Get()))
 	}
 
 	// default: all notes
-	var fTyp = NoteOnFilter(-1)
+	var fTyp = filter.NoteOn(-1)
 
 	if s.typ.IsSet() {
 		v := strings.ToLower(strings.TrimSpace(s.typ.Get()))
 		switch v {
 		case "no":
-			fTyp = NoteOnFilter(int8(s.value.Get()))
+			fTyp = filter.NoteOn(int8(s.value.Get()))
 		case "cc":
-			fTyp = CCFilter(int8(s.value.Get()))
+			fTyp = filter.CC(int8(s.value.Get()))
 		case "at":
-			fTyp = AftertouchFilter()
+			fTyp = filter.Aftertouch()
 		case "pa":
-			fTyp = PolyAftertouchFilter(int8(s.value.Get()))
+			fTyp = filter.PolyAftertouch(int8(s.value.Get()))
 		case "pb":
-			fTyp = PitchbendFilter()
+			fTyp = filter.Pitchbend()
 		default:
 			return fmt.Errorf(`unknown type of metronome: %v, known types are: 
 'no' (NoteOn), 
@@ -78,6 +79,6 @@ func (s metro) setTempo() error {
 		}
 	}
 
-	opts = append(opts, OptionFilter(AndFilter(chFilter, fTyp)))
+	opts = append(opts, OptionFilter(filter.And(chFilter, fTyp)))
 	return SetTempo(s.srcFile.Get(), destFile, opts...)
 }
