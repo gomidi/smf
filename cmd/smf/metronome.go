@@ -43,7 +43,7 @@ func (s metro) setTempo() error {
 	}
 
 	var opts []Option
-	opts = append(opts, OptionTrack(int16(s.trackNo.Get())))
+	opts = append(opts, Track(int16(s.trackNo.Get())))
 
 	// default: all channels
 	var chFilter = filter.Channel(-1)
@@ -79,6 +79,6 @@ func (s metro) setTempo() error {
 		}
 	}
 
-	opts = append(opts, OptionFilter(filter.And(chFilter, fTyp)))
+	opts = append(opts, Filter(filter.And(chFilter, fTyp)))
 	return SetTempo(s.srcFile.Get(), destFile, opts...)
 }

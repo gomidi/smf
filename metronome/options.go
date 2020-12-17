@@ -6,15 +6,15 @@ import (
 
 type Option func(*file)
 
-// OptionTrack sets the track no, where the metronome resides, starting by 0
-func OptionTrack(trackNo int16) Option {
+// Track sets the track no, where the metronome resides, starting by 0
+func Track(trackNo int16) Option {
 	return func(f *file) {
 		f.metronomeTrackno = trackNo
 	}
 }
 
-// OptionFilter sets the filter for the metronome messages
-func OptionFilter(md filter.Filter) Option {
+// Filter sets the filter for the metronome messages
+func Filter(md filter.Filter) Option {
 	return func(f *file) {
 		f.metronomeDetector = md
 	}
