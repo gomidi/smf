@@ -1,0 +1,17 @@
+github.com/gdamore/encoding v0.0.0-20151215212835-b23993cbb635 h1:hheUEMzaOie/wKeIc1WPa7CDVuIO5hqQxjS+dwTQEnI=
+github.com/gdamore/encoding v0.0.0-20151215212835-b23993cbb635/go.mod h1:yrQYJKKDTrHmbYxI7CYi+/hbdiDT2m4Hj+t0ikCjsrQ=
+github.com/gdamore/tcell v1.1.0 h1:RbQgl7jukmdqROeNcKps7R2YfDCQbWkOd1BwdXrxfr4=
+github.com/gdamore/tcell v1.1.0/go.mod h1:tqyG50u7+Ctv1w5VX67kLzKcj9YXR/JSBZQq/+mLl1A=
+github.com/lucasb-eyer/go-colorful v0.0.0-20180709185858-c7842319cf3a h1:B2QfFRl5yGVGGcyEVFzfdXlC1BBvszsIAsCeef2oD0k=
+github.com/lucasb-eyer/go-colorful v0.0.0-20180709185858-c7842319cf3a/go.mod h1:NXg0ArsFk0Y01623LgUqoqcouGDB+PwCCQlrwrG6xJ4=
+github.com/mattn/go-runewidth v0.0.3 h1:a+kO+98RDGEfo6asOGMmpodZq4FNtnGP54yps8BzLR4=
+github.com/mattn/go-runewidth v0.0.3/go.mod h1:LwmH8dsx7+W8Uxz3IHJYH5QSwggIsqBzpuz5H//U1FU=
+github.com/rivo/tview v0.0.0-20180821142722-77bcb6c6b900 h1:zG3+pS2uTzAzGwiCieauvctMFJ7koq8FcX3zuvodl3U=
+github.com/rivo/tview v0.0.0-20180821142722-77bcb6c6b900/go.mod h1:J4W+hErFfITUbyFAEXizpmkuxX7ZN56dopxHB4XQhMw=
+gitlab.com/gomidi/midi v1.15.3/go.mod h1:3ohtNOhqoSakkuLG/Li1OI6I3J1c2LErnJF5o/VBq1c=
+gitlab.com/gomidi/midi v1.20.3 h1:aTUkReoHHb7flsbBcDjur0XFbEU///OEStm2lJ+a+Ro=
+gitlab.com/gomidi/midi v1.20.3/go.mod h1:3ohtNOhqoSakkuLG/Li1OI6I3J1c2LErnJF5o/VBq1c=
+gitlab.com/gomidi/rtmididrv v0.9.3/go.mod h1:Tm1+gEkKGIvMCTieUc0WcZU3BqYyzwEmnWDx1Dr9JJw=
+gitlab.com/gomidi/rtmididrv/imported/rtmidi v0.0.0-20191025100939-514fe0ed97a6/go.mod h1:FYVFN2H23IsX56VntiDF9DgCIekHh359wW+iMl1W8rQ=
+golang.org/x/text v0.3.0 h1:g61tztE5qeGQ89tm6NTjjM9VPIm088od1l6aSorWRWg=
+golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=

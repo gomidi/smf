@@ -37,6 +37,8 @@ func run() error {
 		return CAT.print()
 	case LYRICS.Config:
 		return LYRICS.print()
+	case UI.Config:
+		return UI.show()
 	default:
 		fmt.Fprint(os.Stdout, CONFIG.Usage())
 	}
