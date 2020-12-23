@@ -22,7 +22,7 @@ type cat struct {
 
 func (c *cat) init() {
 	c.Config = CONFIG.MustCommand("cat", "cat shows the content of an SMF (MIDI) file")
-	c.file = CONFIG.NewString("file", "path of the midi file", config.Shortflag('f'), config.Required)
+	c.file = c.NewString("file", "path of the midi file", config.Shortflag('f'), config.Required)
 }
 
 func (c *cat) print() error {

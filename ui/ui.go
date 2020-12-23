@@ -3,8 +3,8 @@ package ui
 import (
 	"fmt"
 
-	"github.com/gdamore/tcell"
 	"github.com/gdamore/tcell/encoding"
+	"github.com/gdamore/tcell/v2"
 
 	//	"github.com/gomidi/connect/rtmidiadapter"
 	"github.com/rivo/tview"
@@ -207,7 +207,7 @@ func saveConfig() error {
 
 func StartUI(file string) error {
 	encoding.Register()
-	
+
 	smf.New()
 	song, err := smf.ReadSMF(file)
 
@@ -216,7 +216,7 @@ func StartUI(file string) error {
 	}
 
 	fmt.Println(song.BarLines())
-	
+
 	/*
 		_, err := os.Stat(CONFIG_FILE)
 		if err != nil {

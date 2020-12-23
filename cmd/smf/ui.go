@@ -18,7 +18,7 @@ type _ui struct {
 
 func (c *_ui) init() {
 	c.Config = CONFIG.MustCommand("ui", "show UI for a SMF file")
-	c.file = CONFIG.NewString("file", "the SMF file that is shown", config.Shortflag('f'), config.Required)
+	c.file = c.NewString("file", "the SMF file that is shown", config.Shortflag('f'), config.Required)
 }
 
 func (c *_ui) show() error {
