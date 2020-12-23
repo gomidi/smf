@@ -215,7 +215,7 @@ func StartUI(file string) error {
 		return err
 	}
 
-	fmt.Println(song.BarLines())
+	//	fmt.Println(song.BarLines())
 
 	/*
 		_, err := os.Stat(CONFIG_FILE)
@@ -239,11 +239,11 @@ func StartUI(file string) error {
 		}
 	*/
 	pagesRight = tview.NewPages()
-	//runScreen = newRunnerScreen()
+	runScreen = newRunnerScreen(song)
 
 	//changeScreen(runnerForm())
 	pages = tview.NewPages()
-	//pages.AddAndSwitchToPage("runner", runScreen, true)
+	pages.AddAndSwitchToPage("runner", runScreen, true)
 	//pages.AddPage("Condition", newConditionScreen(), true, false)
 	//pages.AddPage("action", newActionScreen(), true, false)
 	pages.AddPage("line", newLineScreen(), true, false)
@@ -273,8 +273,9 @@ func StartUI(file string) error {
 		AddItem(
 			tview.NewFlex().
 				SetDirection(tview.FlexColumn).
-				AddItem(pages, 0, 1, true).
-				AddItem(pagesRight, 0, 2, true),
+				AddItem(pages, 0, 1, true),
+			/*.
+			AddItem(pagesRight, 0, 2, true), */
 			0, 2, true).
 		AddItem(info, 1, 1, false)
 

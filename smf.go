@@ -353,7 +353,7 @@ func (s *Song) TrackWidth(i int) uint8 {
 	return 0
 }
 
-func keyToNote(key uint8) string {
+func KeyToNote(key uint8) string {
 	nt := key % 12
 	oct := key / 12
 
@@ -375,14 +375,14 @@ func keyToNote(key uint8) string {
 	return fmt.Sprintf("%s%v", notes[nt], oct)
 }
 
-func showMessage(msg midi.Message) string {
+func ShowMessage(msg midi.Message) string {
 	switch v := msg.(type) {
 	case channel.NoteOn:
-		return fmt.Sprintf("%s/%v_", keyToNote(v.Key()), v.Velocity())
+		return fmt.Sprintf("%s/%v_", KeyToNote(v.Key()), v.Velocity())
 	case channel.NoteOff:
-		return fmt.Sprintf("_%s", keyToNote(v.Key()))
+		return fmt.Sprintf("_%s", KeyToNote(v.Key()))
 	case channel.NoteOffVelocity:
-		return fmt.Sprintf("_%s", keyToNote(v.Key()))
+		return fmt.Sprintf("_%s", KeyToNote(v.Key()))
 	/*
 		case channel.Aftertouch:
 		case channel.ControlChange:
@@ -436,7 +436,7 @@ func (s *Song) BarLines() string {
 					var printed bool
 					for _, m := range p.Messages {
 						if m.TrackNo == t.No {
-							fmt.Fprintf(&bf, " %s | ", showMessage(m.Message))
+							fmt.Fprintf(&bf, " %s | ", ShowMessage(m.Message))
 							printed = true
 						}
 					}

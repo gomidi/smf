@@ -5,24 +5,76 @@ import (
 
 	"github.com/rivo/tview"
 	"gitlab.com/gomidi/midi"
+	"gitlab.com/gomidi/smf"
 )
+
+/*
+// Demo code for the Table primitive.
+package main
+
+import (
+	"strings"
+
+	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
+)
+
+func main() {
+	app := tview.NewApplication()
+	table := tview.NewTable().
+		SetBorders(true)
+	lorem := strings.Split("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", " ")
+	cols, rows := 10, 40
+	word := 0
+	for r := 0; r < rows; r++ {
+		for c := 0; c < cols; c++ {
+			color := tcell.ColorWhite
+			if c < 1 || r < 1 {
+				color = tcell.ColorYellow
+			}
+			table.SetCell(r, c,
+				tview.NewTableCell(lorem[word]).
+					SetTextColor(color).
+					SetAlign(tview.AlignCenter))
+			word = (word + 1) % len(lorem)
+		}
+	}
+	table.Select(0, 0).SetFixed(1, 1).SetDoneFunc(func(key tcell.Key) {
+		if key == tcell.KeyEscape {
+			app.Stop()
+		}
+		if key == tcell.KeyEnter {
+			table.SetSelectable(true, true)
+		}
+	}).SetSelectedFunc(func(row int, column int) {
+		table.GetCell(row, column).SetTextColor(tcell.ColorRed)
+		table.SetSelectable(false, false)
+	})
+	if err := app.SetRoot(table, true).EnableMouse(true).Run(); err != nil {
+		panic(err)
+	}
+}
+
+*/
 
 type runnerScreen struct {
 	//*tview.Box
 	//	currentTransformer int
 	//	transformers       []string
-	*tview.Form
+	//*tview.Form
+	*tview.Table
 	lines         []string
 	linesDropDown *tview.DropDown
 	chosenLine    string
 	chosenInport  midi.In
 	chosenOutport midi.Out
+	song          *smf.Song
 	//proxy         *midiproxy.Proxy
 }
 
 func (sc *runnerScreen) Focus(delegate func(p tview.Primitive)) {
-	sc.refresh()
-	sc.Form.Focus(delegate)
+	//	sc.refresh()
+	//	sc.Form.Focus(delegate)
 }
 
 func (sc *runnerScreen) lineIndex() int {
@@ -43,14 +95,16 @@ func (sc *runnerScreen) refresh() {
 	sc.linesDropDown.SetCurrentOption(sc.lineIndex())
 }
 
-func newRunnerScreen() *runnerScreen {
+func newRunnerScreen(s *smf.Song) *runnerScreen {
 	sc := &runnerScreen{}
+	sc.song = s
 	sc.chosenInport = nil
 	sc.chosenOutport = nil
-	sc.linesDropDown = tview.NewDropDown()
-	sc.linesDropDown.SetLabel("Stack")
-	sc.refresh()
-	sc.Form = sc.runnerForm()
+	//sc.linesDropDown = tview.NewDropDown()
+	//sc.linesDropDown.SetLabel("Stack")
+	//sc.refresh()
+	//sc.Form = sc.runnerForm()
+	sc.Table = sc.runnerForm()
 	return sc
 }
 

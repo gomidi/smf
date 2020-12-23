@@ -8,3 +8,4 @@ var app *tview.Application
 
 var pages *tview.Pages
 var pagesRight *tview.Pages
+var runScreen *runnerScreen
