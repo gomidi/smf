@@ -233,6 +233,7 @@ func StartUI(file string) error {
 		}
 	*/
 	app = tview.NewApplication()
+
 	/*
 		if len(data.Stacks) > 0 {
 			chosenStack = data.Stacks[0].Name
@@ -286,15 +287,28 @@ func StartUI(file string) error {
 	//	layout.AddItem(info, 2, 1, 300, 200, 300, 200, false)
 
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		//fmt.Println(event.Name())
 		switch event.Key() {
+		case tcell.KeyEnter:
+			if !inModal {
+				row, col := runScreen.Table.GetSelection()
+				runScreen.selectedFunc(row, col)
+			} else {
+				return event
+			}
+		case tcell.KeyDown:
+			runScreen.selectNextLine()
+		case tcell.KeyUp:
+			runScreen.selectPrevLine()
 		case tcell.KeyLeft:
-			app.SetFocus(pages)
+			runScreen.selectPrevCol()
 		case tcell.KeyRight:
-			app.SetFocus(pagesRight)
+			runScreen.selectNextCol()
 		case tcell.KeyF10:
 			// print help
 			m := tview.NewModal()
-			m.SetText("HELP. Nothing to see here, work in progress")
+			//m.SetText("HELP. Nothing to see here, work in progress")
+			m.SetText(fmt.Sprintf("height: %v lines", runScreen.height))
 			m.AddButtons([]string{"Ok"}).
 				SetDoneFunc(func(buttonIndex int, buttonLabel string) {
 					if buttonLabel == "Ok" {
@@ -362,8 +376,8 @@ func StartUI(file string) error {
 			pagesRight.RemovePage("form")
 			pages.SwitchToPage("runner")
 			app.SetFocus(pages)
-		case tcell.KeyEscape, tcell.KeyTab:
-			return event
+		//case tcell.KeyEscape, tcell.KeyTab:
+		//	return event
 		default:
 			//			panic(fmt.Sprintf("key: %#v", event.Key()))
 		}
@@ -387,6 +401,12 @@ func StartUI(file string) error {
 	//changeScreen(runnerPage())
 	changeScreen(layout)
 	app.SetFocus(pages)
+
+	app.SetAfterDrawFunc(func(sc tcell.Screen) {
+		_, runScreen.height = sc.Size()
+		runScreen.refresh()
+	})
+
 	/*
 		pages.AddPage("runner", runnerPage(), false, true)
 		pages.AddPage("matcher", matcherPage(), false, false)

@@ -1,8 +1,9 @@
 package ui
 
 import (
-	"sort"
+	"fmt"
 
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"gitlab.com/gomidi/midi"
 	"gitlab.com/gomidi/smf"
@@ -57,19 +58,74 @@ func main() {
 
 */
 
+var inModal bool
+
 type runnerScreen struct {
 	//*tview.Box
 	//	currentTransformer int
 	//	transformers       []string
 	//*tview.Form
 	*tview.Table
-	lines         []string
+	//lines         []string
 	linesDropDown *tview.DropDown
 	chosenLine    string
 	chosenInport  midi.In
 	chosenOutport midi.Out
 	song          *smf.Song
+	height        int
+	currentBar    int
+	topPosition   int
+	selectedLine  int
+	selectedCol   int
+	cols          int
+	colLeftOffset int
+	lines         int
 	//proxy         *midiproxy.Proxy
+}
+
+func (sc *runnerScreen) selectedFunc(row int, column int) {
+	/*
+		for c := 0; c < sc.cols; c++ {
+			sc.Table.GetCell(sc.selectedLine, c).SetBackgroundColor(tcell.ColorBlack)
+		}
+		for c := 0; c < sc.cols; c++ {
+			sc.Table.GetCell(row, c).SetBackgroundColor(tcell.ColorRed)
+		}
+	*/
+
+	//println("selectedFuncCalled")
+
+	ref := sc.Table.GetCell(row, column).GetReference()
+	//panic(ref)
+
+	if ref != nil {
+		ms, ok := ref.(*smf.TrackMessage)
+		if ok && ms != nil {
+			//panic(ms.Message.String())
+			inModal = true
+
+			m := tview.NewModal()
+			m.SetTitle(fmt.Sprintf("track: %v position: %v", ms.TrackNo, ms.AbsPos))
+			//m.SetText("HELP. Nothing to see here, work in progress")
+			m.SetTitleColor(tcell.ColorWhite)
+			m.SetText(ms.Message.String())
+			m.SetBorder(true)
+			m.AddButtons([]string{"Ok"}).
+				SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+					if buttonLabel == "Ok" {
+						changeScreen(layout)
+						app.SetFocus(pages)
+						inModal = false
+					}
+				})
+			changeScreen(m)
+
+		}
+	}
+
+	sc.selectedLine = row
+	//table.SetSelectable(false, false)
+	//sc.Table.SetSelectable(false, false)
 }
 
 func (sc *runnerScreen) Focus(delegate func(p tview.Primitive)) {
@@ -77,6 +133,7 @@ func (sc *runnerScreen) Focus(delegate func(p tview.Primitive)) {
 	//	sc.Form.Focus(delegate)
 }
 
+/*
 func (sc *runnerScreen) lineIndex() int {
 	for i, st := range sc.lines {
 		if sc.chosenLine == st {
@@ -85,14 +142,88 @@ func (sc *runnerScreen) lineIndex() int {
 	}
 	return -1
 }
+*/
 
 func (sc *runnerScreen) refresh() {
-	sc.lines = getLines()
-	sort.Strings(sc.lines)
-	sc.linesDropDown.SetOptions(sc.lines, func(option string, optionIndex int) {
-		sc.chosenLine = option
-	})
-	sc.linesDropDown.SetCurrentOption(sc.lineIndex())
+	//_, _, _, sc.height = sc.GetRect()
+	sc.refreshNotes()
+	/*
+		sc.lines = getLines()
+		sort.Strings(sc.lines)
+		sc.linesDropDown.SetOptions(sc.lines, func(option string, optionIndex int) {
+			sc.chosenLine = option
+		})
+		sc.linesDropDown.SetCurrentOption(sc.lineIndex())
+	*/
+}
+
+func (sc *runnerScreen) selectNextCol() {
+	if sc.selectedCol > sc.cols-1 {
+	} else {
+		sc.selectedCol++
+		sc.selectLine()
+	}
+}
+
+func (sc *runnerScreen) selectPrevCol() {
+	if sc.selectedCol <= 0 {
+		// do nothing
+	} else {
+		sc.selectedCol--
+		sc.selectLine()
+	}
+}
+
+func (sc *runnerScreen) selectNextLine() {
+	//if sc.selectedLine == sc.height-2 {
+	// TODO: scroll one line
+	//} else {
+	sc.selectedLine++
+	sc.selectLine()
+	//}
+}
+
+func (sc *runnerScreen) selectPrevLine() {
+	if sc.selectedLine <= 0 {
+		// do nothing
+	} else {
+		sc.selectedLine--
+		sc.selectLine()
+	}
+}
+
+func (sc *runnerScreen) selectLine() {
+	/*
+		for c := 0; c < sc.cols; c++ {
+			if c == 5 {
+				sc.Table.GetCell(sc.selectedLine, c).SetTextColor(tcell.ColorGrey).SetBackgroundColor(tcell.ColorBlack)
+				//	txt := cl.Text
+				//	cl.SetTextColor(tcell.ColorGrey).SetBackgroundColor(tcell.ColorBlack)
+				//	cl.SetText(txt)
+			} else {
+				sc.Table.GetCell(sc.selectedLine, c).SetBackgroundColor(tcell.ColorBlack)
+			}
+		}
+		for c := 0; c < sc.cols; c++ {
+			switch c {
+			case 5:
+				sc.Table.GetCell(no, c).SetBackgroundColor(tcell.ColorGrey).SetTextColor(tcell.ColorWhite)
+			case sc.selectedCol:
+				sc.Table.GetCell(no, c).SetBackgroundColor(tcell.ColorGrey)
+			default:
+			}
+		}
+		sc.selectedLine = no
+	*/
+
+	sc.Table.Select(sc.selectedLine, sc.selectedCol)
+	/*
+		.SetDoneFunc(func(key tcell.Key) {
+			if key == tcell.KeyEnter {
+				sc.Table.SetSelectable(true, true)
+			}
+		})
+	*/
 }
 
 func newRunnerScreen(s *smf.Song) *runnerScreen {
@@ -100,11 +231,31 @@ func newRunnerScreen(s *smf.Song) *runnerScreen {
 	sc.song = s
 	sc.chosenInport = nil
 	sc.chosenOutport = nil
+	sc.Table = tview.NewTable()
+	sc.Table.SetSelectable(true, true)
+	sc.Table.SetFixed(1, 6)
+	sc.Table.SetBorders(false)
+	sc.Table.SetBordersColor(tcell.ColorGrey)
+	sc.Table.SetSeparator('|')
+	//sc.Table.SetEvaluateAllRows(true)
+	sc.Table.WrapInputHandler(func(key *tcell.EventKey, cb func(tview.Primitive)) {
+		panic(key.Name())
+	})
+	//sc.Table.
+	var sty tcell.Style
+
+	sc.Table.SetSelectedStyle(sty.Background(tcell.ColorWhite).Foreground(tcell.ColorBlack))
+	//sc.selectLine()
+	sc.setTableHeader()
+	//sc.selectedCol = 6
+	//var selectedRow = 0
+
+	//sc.Table.SetSelectedFunc()
+
 	//sc.linesDropDown = tview.NewDropDown()
 	//sc.linesDropDown.SetLabel("Stack")
-	//sc.refresh()
+	sc.refresh()
 	//sc.Form = sc.runnerForm()
-	sc.Table = sc.runnerForm()
 	return sc
 }
 

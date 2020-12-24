@@ -96,13 +96,13 @@ func findOutPort(name string) midi.Out {
 func showMessage(msg midi.Message) string {
 	switch v := msg.(type) {
 	case channel.NoteOn:
-		return fmt.Sprintf("[red]%s[grey]/%v", smf.KeyToNote(v.Key()), v.Velocity())
+		return fmt.Sprintf("[red]%s[white]/%v", smf.KeyToNote(v.Key()), v.Velocity())
 	case channel.NoteOff:
-		return fmt.Sprintf("[grey]/%s", smf.KeyToNote(v.Key()))
+		return fmt.Sprintf("[white]/%s", smf.KeyToNote(v.Key()))
 	case channel.NoteOffVelocity:
-		return fmt.Sprintf("[grey]/%s", smf.KeyToNote(v.Key()))
+		return fmt.Sprintf("[white]/%s", smf.KeyToNote(v.Key()))
 	case channel.Aftertouch:
-		return fmt.Sprintf("[blue]AT%v", v.Pressure())
+		return fmt.Sprintf("[green]AT%v", v.Pressure())
 	case channel.ControlChange:
 		name := cc.Name[v.Controller()]
 		if name == "" {
@@ -110,11 +110,11 @@ func showMessage(msg midi.Message) string {
 		} else {
 			name = fmt.Sprintf("%v(%s)", v.Controller(), name)
 		}
-		return fmt.Sprintf("[blue]CC%s[grey]/%v", name, v.Value())
+		return fmt.Sprintf("[green]CC%s[white]/%v", name, v.Value())
 	case channel.Pitchbend:
-		return fmt.Sprintf("[blue]PB%v", v.Value())
+		return fmt.Sprintf("[green]PB%v", v.Value())
 	case channel.PolyAftertouch:
-		return fmt.Sprintf("[blue]PA%v[grey]/%v", v.Key(), v.Pressure())
+		return fmt.Sprintf("[green]PA%v[white]/%v", v.Key(), v.Pressure())
 	case channel.ProgramChange:
 		name := gm.Instr(v.Program()).String()
 		if name == "" {
@@ -122,19 +122,58 @@ func showMessage(msg midi.Message) string {
 		} else {
 			name = fmt.Sprintf("%v(%s)", v.Program(), name)
 		}
-		return fmt.Sprintf("[blue]PC%s", name)
+		return fmt.Sprintf("[green]PC%s", name)
 	case meta.Lyric:
-		return fmt.Sprintf("[green]%q", v.Text())
+		return fmt.Sprintf("[cyan]%q", v.Text())
 	case meta.Text:
-		return fmt.Sprintf("[green]'%s'", v.Text())
+		return fmt.Sprintf("[cyan]'%s'", v.Text())
 	default:
-		return fmt.Sprintf("[grey]%s", msg.String())
+		return fmt.Sprintf("[white]%s", msg.String())
 	}
+}
+
+func (s *runnerScreen) setTableHeader() {
+
+	s.Table.SetCell(0, 0, tview.NewTableCell("Bar").SetBackgroundColor(tcell.ColorBlue).SetTextColor(tcell.ColorWhite).SetAlign(tview.AlignCenter).SetAttributes(tcell.AttrBold))
+	s.Table.SetCell(0, 1, tview.NewTableCell("Meter").SetBackgroundColor(tcell.ColorBlue).SetTextColor(tcell.ColorWhite).SetAlign(tview.AlignCenter).SetAttributes(tcell.AttrBold))
+	s.Table.SetCell(0, 2, tview.NewTableCell("Comment").SetBackgroundColor(tcell.ColorBlue).SetTextColor(tcell.ColorWhite).SetAlign(tview.AlignCenter).SetAttributes(tcell.AttrBold))
+	s.Table.SetCell(0, 3, tview.NewTableCell("Mark").SetBackgroundColor(tcell.ColorBlue).SetTextColor(tcell.ColorWhite).SetAlign(tview.AlignCenter).SetAttributes(tcell.AttrBold))
+	s.Table.SetCell(0, 4, tview.NewTableCell("Tempo").SetBackgroundColor(tcell.ColorBlue).SetTextColor(tcell.ColorWhite).SetAlign(tview.AlignCenter).SetAttributes(tcell.AttrBold))
+	s.Table.SetCell(0, 5, tview.NewTableCell("Beat").SetBackgroundColor(tcell.ColorBlue).SetTextColor(tcell.ColorWhite).SetAlign(tview.AlignCenter).SetAttributes(tcell.AttrBold))
+
+	s.cols = 6
+
+	for i, t := range s.song.Tracks {
+		//if t.WithContent {
+		//fmt.Fprintf(&bf, " %s[%v] | ", t.Name, t.Channel)
+		var str = t.Name
+		if t.Channel >= 0 {
+			str += fmt.Sprintf(" [red][%v]", t.Channel)
+		}
+		s.Table.SetCell(0, 6+i, tview.NewTableCell(str).SetBackgroundColor(tcell.ColorBlue).SetTextColor(tcell.ColorYellow).SetAlign(tview.AlignCenter).SetAttributes(tcell.AttrBold))
+		s.cols++
+		//}
+	}
+
+	/*
+		for l := 1; l < s.height; l++ {
+			for cc := 0; cc < s.cols; cc++ {
+				s.Table.SetCell(l, cc, tview.NewTableCell(" X ").SetTextColor(tcell.ColorGreen))
+			}
+		}
+	*/
 }
 
 // run a configuration
 //func (s *runnerScreen) runnerForm() *tview.Form {
-func (s *runnerScreen) runnerForm() *tview.Table {
+func (s *runnerScreen) refreshNotes() {
+
+	for l := 1; l < s.lines; l++ {
+		for cc := 0; cc < s.cols; cc++ {
+			s.Table.SetCell(l, cc, tview.NewTableCell(" "))
+		}
+	}
+
 	/*
 		outports := getOutPorts()
 		inports := getInPorts()
@@ -154,7 +193,7 @@ func (s *runnerScreen) runnerForm() *tview.Table {
 		form.SetBorder(true).SetTitle("connection").SetTitleAlign(tview.AlignCenter)
 		return form
 	*/
-	table := tview.NewTable()
+
 	//table.SetBorders(true)
 	//lorem := strings.Split("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.", " ")
 	//cols, rows := 10, 40
@@ -165,43 +204,26 @@ func (s *runnerScreen) runnerForm() *tview.Table {
 
 	*/
 
-	table.SetCell(0, 0, tview.NewTableCell("Bar").SetTextColor(tcell.ColorYellowGreen).SetAlign(tview.AlignLeft))
-	table.SetCell(0, 1, tview.NewTableCell("Meter").SetTextColor(tcell.ColorYellowGreen).SetAlign(tview.AlignLeft))
-	table.SetCell(0, 2, tview.NewTableCell("Comment").SetTextColor(tcell.ColorYellowGreen).SetAlign(tview.AlignLeft))
-	table.SetCell(0, 3, tview.NewTableCell("Mark").SetTextColor(tcell.ColorYellowGreen).SetAlign(tview.AlignLeft))
-	table.SetCell(0, 4, tview.NewTableCell("Tempo").SetTextColor(tcell.ColorYellowGreen).SetAlign(tview.AlignLeft))
-	table.SetCell(0, 5, tview.NewTableCell("Beat").SetTextColor(tcell.ColorYellowGreen).SetAlign(tview.AlignLeft))
-
-	var cols = 6
-
-	for i, t := range s.song.Tracks {
-		if t.WithContent {
-			//fmt.Fprintf(&bf, " %s[%v] | ", t.Name, t.Channel)
-			table.SetCell(0, 5+i, tview.NewTableCell(fmt.Sprintf("%s[%v]", t.Name, t.Channel)).SetTextColor(tcell.ColorYellow).SetAlign(tview.AlignLeft))
-			cols++
-		}
-	}
-
 	var line = 1
 
 	for _, b := range s.song.Bars {
 		_ = b
-		bt := fmt.Sprintf("%v", b.No+1)
-		mt := fmt.Sprintf("[grey]%v/%v", b.TimeSig[0], b.TimeSig[1])
+		bt := fmt.Sprintf(" %v", b.No+1)
+		mt := fmt.Sprintf("%v/%v", b.TimeSig[0], b.TimeSig[1])
 
-		table.SetCell(line, 0, tview.NewTableCell(bt).SetTextColor(tcell.ColorGreen).SetAlign(tview.AlignLeft))
-		table.SetCell(line, 1, tview.NewTableCell(mt).SetAlign(tview.AlignLeft))
+		s.Table.SetCell(line, 0, tview.NewTableCell(bt).SetTextColor(tcell.ColorBlue).SetAlign(tview.AlignCenter).SetAttributes(tcell.AttrBold))
+		s.Table.SetCell(line, 1, tview.NewTableCell(mt).SetTextColor(tcell.ColorWhite).SetAlign(tview.AlignCenter).SetAttributes(tcell.AttrBold))
 
-		for cc := 2; cc < cols; cc++ {
-			table.SetCell(line, cc, tview.NewTableCell("----").SetTextColor(tcell.ColorGrey).SetAlign(tview.AlignCenter))
+		for cc := 2; cc < s.cols; cc++ {
+			s.Table.SetCell(line, cc, tview.NewTableCell("--").SetAlign(tview.AlignCenter).SetTextColor(tcell.ColorGrey))
 		}
 
 		line++
 
 		for _, p := range b.Positions {
-			tempo := ""
+			tempo := " "
 			if p.Tempo != 0 {
-				tempo = fmt.Sprintf("[yellow]%0.2f", tempo)
+				tempo = fmt.Sprintf("%0.2f", tempo)
 			}
 
 			var frac float64
@@ -210,62 +232,50 @@ func (s *runnerScreen) runnerForm() *tview.Table {
 				frac = p.Fraction[0] / p.Fraction[1]
 			}
 
-			beat := fmt.Sprintf("[grey]%0.4f", float64(p.Beat)+float64(1)+frac)
+			beat := fmt.Sprintf("%0.4f", float64(p.Beat)+float64(1)+frac)
 
-			table.SetCell(line, 2, tview.NewTableCell(p.Comment).SetAlign(tview.AlignLeft))
-			table.SetCell(line, 3, tview.NewTableCell(p.Mark).SetAlign(tview.AlignLeft))
-			table.SetCell(line, 4, tview.NewTableCell(tempo).SetAlign(tview.AlignLeft))
-			table.SetCell(line, 5, tview.NewTableCell(beat).SetAlign(tview.AlignLeft))
+			s.Table.SetCell(line, 2, tview.NewTableCell(p.Comment).SetAlign(tview.AlignCenter))
+			s.Table.SetCell(line, 3, tview.NewTableCell(p.Mark).SetAlign(tview.AlignCenter))
+			s.Table.SetCell(line, 4, tview.NewTableCell(tempo).SetTextColor(tcell.ColorYellow).SetAlign(tview.AlignLeft).SetAttributes(tcell.AttrBold))
+			s.Table.SetCell(line, 5, tview.NewTableCell(beat).SetTextColor(tcell.ColorGrey).SetAlign(tview.AlignLeft).SetAttributes(tcell.AttrBold))
 
 			//fmt.Fprintf(&bf, "| %s | %s | %s | %s | ", p.Comment, p.Mark, tempo, beat)
 
 			for n, t := range s.song.Tracks {
-				if t.WithContent {
-					//var printed bool
-					for _, m := range p.Messages {
-						if m.TrackNo == t.No {
-							//fmt.Fprintf(&bf, " %s | ", showMessage(m.Message))
-							//printed = true
-							table.SetCell(line, 5+n, tview.NewTableCell(showMessage(m.Message)).SetAlign(tview.AlignLeft))
-						}
+				//if t.WithContent {
+				//var printed bool
+				for _, m := range p.Messages {
+					if m.TrackNo == t.No {
+						//fmt.Fprintf(&bf, " %s | ", showMessage(m.Message))
+						//printed = true
+						s.Table.SetCell(line, 6+n,
+							tview.NewTableCell(showMessage(m.Message)).
+								SetAlign(tview.AlignCenter).
+								SetAttributes(tcell.AttrBold).
+								SetReference(m),
+						)
 					}
-					/*
-						if !printed {
-							fmt.Fprintf(&bf, "  | ")
-						}
-					*/
 				}
+				/*
+					if !printed {
+						fmt.Fprintf(&bf, "  | ")
+					}
+				*/
+				//}
 			}
 
 			line++
 
+			/*
+				if line == s.height-4 {
+					break
+				}
+			*/
 			//fmt.Fprintf(&bf, "\n")
 		}
 	}
 
-	var selectedRow = 0
-
-	table.Select(selectedRow, 0).SetDoneFunc(func(key tcell.Key) {
-		/*
-			if key == tcell.KeyEscape {
-				app.Stop()
-			}
-		*/
-		if key == tcell.KeyEnter {
-			table.SetSelectable(true, true)
-		}
-	}).SetSelectedFunc(func(row int, column int) {
-		for c := 0; c < cols; c++ {
-			table.GetCell(selectedRow, c).SetBackgroundColor(tcell.ColorBlack)
-		}
-		for c := 0; c < cols; c++ {
-			table.GetCell(row, c).SetBackgroundColor(tcell.ColorRed)
-		}
-
-		selectedRow = row
-		//table.SetSelectable(false, false)
-		table.SetSelectable(false, false)
-	})
+	s.lines = line
 
 	/*
 		for r := 0; r < rows; r++ {
@@ -294,5 +304,5 @@ func (s *runnerScreen) runnerForm() *tview.Table {
 		})
 	*/
 
-	return table
+	//return table
 }
