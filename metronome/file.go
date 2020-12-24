@@ -26,8 +26,7 @@ type file struct {
 }
 
 // newFile returns a new file.
-// the default metronome track no is 0, the default metronome detector is NoteOnMetronome
-// on any channel for any key.
+// the default metronome track no is 0, the default metronome is any note on message on any channel for any key.
 func newFile(filePath string, opts ...Option) *file {
 	f := &file{
 		filePath:          filePath,

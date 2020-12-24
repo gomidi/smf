@@ -6,18 +6,18 @@ import (
 	"gitlab.com/gomidi/midi/smf"
 )
 
-// absPosToMsec transforms the absolute ticks to milliseconds based on the tempi
+// absPosToMsec transforms the absolute ticks to microseconds based on the tempi
 func absPosToMsec(metricTicks smf.MetricTicks, temps tempi, absPos uint64) (msec int64) {
 
 	/*
 		calculate the abstime in msec for every tempo position up to the last tempo position before absPos
 		the abstime of a tempo position is calculated the following way:
 
-		absTime = absTimePrevTempo + metricTicks.FractionalDuration(lastTempo, uint32(absPosCurrent - absPosPrevious)).Milliseconds()
+		absTime = absTimePrevTempo + metricTicks.FractionalDuration(lastTempo, uint32(absPosCurrent - absPosPrevious)).Microseconds()
 
 		the abstime of the ticks is
 
-		absTime = absTimePrevTempo + metricTicks.FractionalDuration(lastTempo, uint32(absPos - absPosPrevious)).Milliseconds()
+		absTime = absTimePrevTempo + metricTicks.FractionalDuration(lastTempo, uint32(absPos - absPosPrevious)).Microseconds()
 	*/
 
 	var absTimeLastTempo int64
@@ -34,7 +34,7 @@ func absPosToMsec(metricTicks smf.MetricTicks, temps tempi, absPos uint64) (msec
 			continue
 		}
 
-		absTime := absTimeLastTempo + metricTicks.FractionalDuration(lastTempo, uint32(tm.absPos-absTicksLastTempo)).Milliseconds()
+		absTime := absTimeLastTempo + metricTicks.FractionalDuration(lastTempo, uint32(tm.absPos-absTicksLastTempo)).Microseconds()
 
 		absTimeLastTempo = absTime
 		absTicksLastTempo = tm.absPos
@@ -45,23 +45,23 @@ func absPosToMsec(metricTicks smf.MetricTicks, temps tempi, absPos uint64) (msec
 		return absTimeLastTempo
 	}
 
-	msec = absTimeLastTempo + metricTicks.FractionalDuration(lastTempo, uint32(absPos-absTicksLastTempo)).Milliseconds()
-	//fmt.Printf("converted tick at %v to millisec %v\n", absPos, msec)
+	msec = absTimeLastTempo + metricTicks.FractionalDuration(lastTempo, uint32(absPos-absTicksLastTempo)).Microseconds()
+	//fmt.Printf("converted tick at %v to microsecs %v\n", absPos, msec)
 	return
 }
 
-// msecToAbsPos calculates the ticks based on the milliseconds and the tempi
+// msecToAbsPos calculates the ticks based on the microseconds and the tempi
 func msecToAbsPos(metricTicks smf.MetricTicks, temps tempi, msec int64) (absPos uint64) {
 
 	/*
 		calculate the abstick for every tempo absTime up to the last tempo time before msec
 		the abstick of a tempo time is calculated the following way:
 
-		abstick = absTickPrevTempo +  metricTicks.FractionalTicks(lastTempo, (absTimeCurrent-absTimePrevious) *time.Milliseconds )
+		abstick = absTickPrevTempo +  metricTicks.FractionalTicks(lastTempo, (absTimeCurrent-absTimePrevious) *time.Microsecond )
 
 		the abstime of the ticks is
 
-		abstick = absTickPrevTempo +  metricTicks.FractionalTicks(lastTempo, (msec-absTimePrevious) *time.Milliseconds )
+		abstick = absTickPrevTempo +  metricTicks.FractionalTicks(lastTempo, (msec-absTimePrevious) *time.Microsecond )
 	*/
 
 	var absTickLastTempo uint64
@@ -78,7 +78,7 @@ func msecToAbsPos(metricTicks smf.MetricTicks, temps tempi, msec int64) (absPos 
 			continue
 		}
 
-		abstick := absTickLastTempo + uint64(metricTicks.FractionalTicks(lastTempo, time.Duration(tm.msec-absTimeLastTempo)*time.Millisecond))
+		abstick := absTickLastTempo + uint64(metricTicks.FractionalTicks(lastTempo, time.Duration(tm.msec-absTimeLastTempo)*time.Microsecond))
 
 		absTickLastTempo = abstick
 		absTimeLastTempo = tm.msec
@@ -90,13 +90,13 @@ func msecToAbsPos(metricTicks smf.MetricTicks, temps tempi, msec int64) (absPos 
 		return absTickLastTempo
 	}
 
-	absPos = absTickLastTempo + uint64(metricTicks.FractionalTicks(lastTempo, time.Duration(msec-absTimeLastTempo)*time.Millisecond))
-	//fmt.Printf("converted millisec %v to abstick %v\n", msec, absPos)
+	absPos = absTickLastTempo + uint64(metricTicks.FractionalTicks(lastTempo, time.Duration(msec-absTimeLastTempo)*time.Microsecond))
+	//fmt.Printf("converted microsec %v to abstick %v\n", msec, absPos)
 	return
 
 }
 
-// timeDistanceToTempo calculates the tempo based on the distance in milliseconds
+// timeDistanceToTempo calculates the tempo based on the distance in microseconds
 func timeDistaneToTempo(msecA, msecB int64) (bpm float64) {
-	return float64(60000) / float64(msecB-msecA)
+	return float64(60000000) / float64(msecB-msecA)
 }

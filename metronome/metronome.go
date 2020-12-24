@@ -9,7 +9,7 @@ import (
 /*
 
 This package allows to find the tempo changes based on a metronome track.
-All events are converted from tick based time positions to milliseconds based time position.
+All events are converted from tick based time positions to microseconds based time position.
 Then the tempo changes are detected via the time position difference between the beats
 in the metronome track.
 Then the tick based positions are calculated for all events based on the tempo changes.
