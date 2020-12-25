@@ -1,8 +1,6 @@
 package ui
 
 import (
-	"fmt"
-
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"gitlab.com/gomidi/midi"
@@ -83,6 +81,94 @@ type runnerScreen struct {
 	//proxy         *midiproxy.Proxy
 }
 
+func (sc *runnerScreen) insertMessageFunc(row int, column int) {
+	/*
+		for c := 0; c < sc.cols; c++ {
+			sc.Table.GetCell(sc.selectedLine, c).SetBackgroundColor(tcell.ColorBlack)
+		}
+		for c := 0; c < sc.cols; c++ {
+			sc.Table.GetCell(row, c).SetBackgroundColor(tcell.ColorRed)
+		}
+	*/
+
+	//println("selectedFuncCalled")
+	//fmt.Print("getting ref")
+	cell := sc.Table.GetCell(row, column)
+	ref := cell.GetReference()
+	//panic(ref)
+
+	if ref != nil {
+		//fmt.Print("have ref")
+		tm, ok := ref.(*smf.TrackMessage)
+
+		if ok {
+
+			//fmt.Print("have trackmessage")
+
+			//tm.TrackNo
+			ch := sc.song.Tracks[tm.TrackNo].Channel
+			if ch >= 0 {
+				var _msg midi.Message
+				var pmsg = &_msg
+
+				fm := tview.NewForm()
+				fm.AddDropDown("new message", _messagesSelect, 0, func(opt string, idx int) {
+					*pmsg = newMessageInTrack(uint8(ch), opt)
+				})
+				fm.AddButton("ok", func() {
+					_fm := NewEditForm(*pmsg, func(msg midi.Message) {
+						tm.Message = msg
+						cell.SetReference(tm)
+						cell.SetText(showMessage(msg))
+						//sc.refresh()
+
+						changeScreen(layout)
+						app.SetFocus(pages)
+						inModal = false
+						runScreen.Select(row, column)
+					}, func() {
+						changeScreen(layout)
+						app.SetFocus(pages)
+						inModal = false
+						runScreen.Select(row, column)
+					})
+					fm.Blur()
+					changeScreen(_fm)
+				})
+
+				fm.AddButton("cancel", func() {
+					changeScreen(layout)
+					app.SetFocus(pages)
+					inModal = false
+					runScreen.Select(row, column)
+				})
+
+				inModal = true
+				changeScreen(fm)
+			}
+
+		}
+	}
+
+}
+
+func (sc *runnerScreen) deleteMessage(row int, column int) {
+	cell := sc.Table.GetCell(row, column)
+	ref := cell.GetReference()
+	//panic(ref)
+
+	if ref != nil {
+		ms, ok := ref.(*smf.TrackMessage)
+		if ok && ms != nil {
+		}
+
+		ms.Message = nil
+		cell.SetReference(ms)
+		cell.SetText("")
+	}
+	runScreen.Select(row, column)
+}
+
 func (sc *runnerScreen) selectedFunc(row int, column int) {
 	/*
 		for c := 0; c < sc.cols; c++ {
@@ -95,7 +181,8 @@ func (sc *runnerScreen) selectedFunc(row int, column int) {
 
 	//println("selectedFuncCalled")
 
-	ref := sc.Table.GetCell(row, column).GetReference()
+	cell := sc.Table.GetCell(row, column)
+	ref := cell.GetReference()
 	//panic(ref)
 
 	if ref != nil {
@@ -104,21 +191,93 @@ func (sc *runnerScreen) selectedFunc(row int, column int) {
 			//panic(ms.Message.String())
 			inModal = true
 
-			m := tview.NewModal()
-			m.SetTitle(fmt.Sprintf("track: %v position: %v", ms.TrackNo, ms.AbsPos))
-			//m.SetText("HELP. Nothing to see here, work in progress")
-			m.SetTitleColor(tcell.ColorWhite)
-			m.SetText(ms.Message.String())
-			m.SetBorder(true)
-			m.AddButtons([]string{"Ok"}).
-				SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-					if buttonLabel == "Ok" {
+			if ms.Message == nil {
+
+				ch := sc.song.Tracks[ms.TrackNo].Channel
+				if ch >= 0 {
+					var msg midi.Message
+					var pmsg = &msg
+
+					fm := tview.NewForm()
+					fm.AddDropDown("new message", _messagesSelect, 0, func(opt string, idx int) {
+						*pmsg = newMessageInTrack(uint8(ch), opt)
+					})
+					fm.AddButton("ok", func() {
+						//fmt.Print("[red]" + (*pmsg).String())
+						//tm.Message = *pmsg
+						//changeScreen(layout)
+						//app.SetFocus(pages)
+						//inModal = false
+						//cell.SetReference(tm)
+						//cell.SetText(showMessage(*pmsg))
+
+						_fm := NewEditForm(*pmsg, func(msg midi.Message) {
+							ms.Message = msg
+							cell.SetReference(ms)
+							cell.SetText(showMessage(msg))
+							//sc.refresh()
+
+							changeScreen(layout)
+							app.SetFocus(pages)
+							inModal = false
+							runScreen.Select(row, column)
+						}, func() {
+							changeScreen(layout)
+							app.SetFocus(pages)
+							inModal = false
+							runScreen.Select(row, column)
+						})
+						fm.Blur()
+						changeScreen(_fm)
+					})
+
+					fm.AddButton("cancel", func() {
 						changeScreen(layout)
 						app.SetFocus(pages)
 						inModal = false
-					}
+						runScreen.Select(row, column)
+					})
+
+					inModal = true
+					changeScreen(fm)
+				}
+			} else {
+				fm := NewEditForm(ms.Message, func(msg midi.Message) {
+					ms.Message = msg
+					cell.SetReference(ms)
+					cell.SetText(showMessage(msg))
+					//sc.refresh()
+
+					changeScreen(layout)
+					app.SetFocus(pages)
+					inModal = false
+					runScreen.Select(row, column)
+				}, func() {
+					changeScreen(layout)
+					app.SetFocus(pages)
+					inModal = false
+					runScreen.Select(row, column)
 				})
-			changeScreen(m)
+				changeScreen(fm)
+			}
+
+			/*
+				m := tview.NewModal()
+				m.SetTitle(fmt.Sprintf("track: %v position: %v", ms.TrackNo, ms.AbsPos))
+				//m.SetText("HELP. Nothing to see here, work in progress")
+				m.SetTitleColor(tcell.ColorWhite)
+				m.SetText(ms.Message.String())
+				m.SetBorder(true)
+				m.AddButtons([]string{"Ok"}).
+					SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+						if buttonLabel == "Ok" {
+							changeScreen(layout)
+							app.SetFocus(pages)
+							inModal = false
+						}
+					})
+				changeScreen(m)
+			*/
 
 		}
 	}

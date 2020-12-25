@@ -287,12 +287,48 @@ func StartUI(file string) error {
 	//	layout.AddItem(info, 2, 1, 300, 200, 300, 200, false)
 
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		//fmt.Println(event.Name())
+		//fmt.Printf("key %v %v", event.Key(), event.Rune())
+
 		switch event.Key() {
+		case tcell.KeyDEL:
+			row, col := runScreen.Table.GetSelection()
+			runScreen.deleteMessage(row, col)
+		case tcell.KeyDelete:
+			row, col := runScreen.Table.GetSelection()
+			runScreen.deleteMessage(row, col)
+		case tcell.KeyRune: // letters
+			//fmt.Printf("rune: %v", event.Rune())
+			switch event.Rune() {
+			case 't': // add a new track (to edit a track, go to the first line, select the track and press ENTER, to delete a track press then delete)
+			case '0': // go to the table header with the cursor
+				runScreen.Table.Select(0, runScreen.selectedCol)
+			case 'f': // find bar: enter bar number to navigate to
+			case 'c': // copy
+			case 'p': // paste
+			case 's': // save the file
+			case 'd': // delete the current bar
+			case 'k': // kill the current beat line
+			case 'n': // n: new line within current bar
+			case 'b': // b: new bar and beat line within that bar
+			case 'm': /// m: move bar (to move beat line simply edit the beat
+				// move the line
+			case 'r': // r: replace the current message type
+				//fmt.Printf("new")
+				if !inModal {
+					row, col := runScreen.Table.GetSelection()
+					runScreen.insertMessageFunc(row, col)
+					return nil
+				} else {
+					return event
+				}
+			default:
+				runScreen.Table.InputHandler()(event, nil)
+			}
 		case tcell.KeyEnter:
 			if !inModal {
 				row, col := runScreen.Table.GetSelection()
 				runScreen.selectedFunc(row, col)
+				return nil
 			} else {
 				return event
 			}
@@ -404,7 +440,7 @@ func StartUI(file string) error {
 
 	app.SetAfterDrawFunc(func(sc tcell.Screen) {
 		_, runScreen.height = sc.Size()
-		runScreen.refresh()
+		//runScreen.refresh()
 	})
 
 	/*

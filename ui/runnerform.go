@@ -168,11 +168,19 @@ func (s *runnerScreen) setTableHeader() {
 //func (s *runnerScreen) runnerForm() *tview.Form {
 func (s *runnerScreen) refreshNotes() {
 
-	for l := 1; l < s.lines; l++ {
-		for cc := 0; cc < s.cols; cc++ {
-			s.Table.SetCell(l, cc, tview.NewTableCell(" "))
+	/*
+		for l := 1; l < s.lines; l++ {
+			for cc := 0; cc < s.cols; cc++ {
+				if cc > 5 {
+					var tm smf.TrackMessage
+					tm.TrackNo = uint16(cc - 6)
+					s.Table.SetCell(l, cc, tview.NewTableCell("").SetReference(tm))
+				} else {
+					s.Table.SetCell(l, cc, tview.NewTableCell(" "))
+				}
+			}
 		}
-	}
+	*/
 
 	/*
 		outports := getOutPorts()
@@ -240,6 +248,16 @@ func (s *runnerScreen) refreshNotes() {
 			s.Table.SetCell(line, 5, tview.NewTableCell(beat).SetTextColor(tcell.ColorGrey).SetAlign(tview.AlignLeft).SetAttributes(tcell.AttrBold))
 
 			//fmt.Fprintf(&bf, "| %s | %s | %s | %s | ", p.Comment, p.Mark, tempo, beat)
+
+			for cc := 6; cc < s.cols; cc++ {
+				var tm smf.TrackMessage
+				tm.TrackNo = uint16(cc - 6)
+				tm.Position = p
+				tm.AbsPos = p.AbsTicks()
+				s.Table.SetCell(line, cc, tview.NewTableCell("").SetReference(&tm).
+					SetAlign(tview.AlignCenter).
+					SetAttributes(tcell.AttrBold))
+			}
 
 			for n, t := range s.song.Tracks {
 				//if t.WithContent {
