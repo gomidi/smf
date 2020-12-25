@@ -1,14 +1,11 @@
 package ui
 
-import (
-	"fmt"
+//"github.com/rivo/tview"
+//lineconfig "gitlab.com/gomidi/midiline/config"
 
-	"github.com/rivo/tview"
-	//lineconfig "gitlab.com/gomidi/midiline/config"
-)
-
+/*
 func lineFormAdd() (form *tview.Form) {
-	/*
+
 		form = tview.NewForm()
 		var newFunc = ""
 		var newargs []interface{}
@@ -53,7 +50,7 @@ func lineFormAdd() (form *tview.Form) {
 		})
 		form.SetBorder(true).SetTitle("Add Transformer").SetTitleAlign(tview.AlignLeft)
 		return form
-	*/
+
 
 	form = tview.NewForm()
 	//	var newMatch = ""
@@ -99,7 +96,7 @@ func lineFormAdd() (form *tview.Form) {
 				//changeScreen(newStackScreen())
 				//changeScreen(runnerPage())
 			}).
-		*/
+
 		SetCancelFunc(func() {
 			pages.SwitchToPage("line")
 			app.SetFocus(pages)
@@ -108,12 +105,13 @@ func lineFormAdd() (form *tview.Form) {
 	form.SetBorder(true).SetTitle("new line").SetTitleAlign(tview.AlignLeft)
 	return form
 }
+*/
 
+/*
 func lineFormEdit(selectedLine string) (form *tview.Form) {
 	form = tview.NewForm()
 	//var mt lineconfig.Line
 	var selected int = -1
-	/*
 		for i, m := range data.Lines {
 			if m.Name == selectedLine {
 				selected = i
@@ -122,7 +120,7 @@ func lineFormEdit(selectedLine string) (form *tview.Form) {
 		}
 
 		oldName := mt.Name
-	*/
+
 
 	if selected == -1 {
 		showError(fmt.Errorf("unknown line %#v", selectedLine))
@@ -135,18 +133,18 @@ func lineFormEdit(selectedLine string) (form *tview.Form) {
 	//	var selectedTransformer = -1
 	actions := getActions()
 
-	/*
+
 		var oldName = mt.Name
 		_ = oldName
-	*/
+
 
 	var steps []string
 
-	/*
+
 		for i, trf := range mt.Steps {
 			steps = append(steps, fmt.Sprintf("%v. If %#v then do %#v.", i+1, trf.Condition, trf.Action))
 		}
-	*/
+
 
 	var findConditionIndex = func(name string) int {
 		for i, mmt := range Conditions {
@@ -223,12 +221,12 @@ func lineFormEdit(selectedLine string) (form *tview.Form) {
 	}
 
 	form.
-		/*
+
 			AddInputField("Name", mt.Name, 100, nil, func(text string) {
 				mt.Name = text
 			}).
-		*/
-		/*
+
+
 			AddButton("save", func() {
 				replaceStack(oldName, mt)
 				pages.SwitchToPage("line")
@@ -236,9 +234,9 @@ func lineFormEdit(selectedLine string) (form *tview.Form) {
 				//			changeScreen(newStackScreen())
 				//			changeScreen(runnerPage())
 			}).
-		*/
+
 		//		AddFormItem(stepDropDown).
-		/*
+
 			AddDropDown("select transformation", transformations, -1, func(option string, optionIndex int) {
 				for i := range transformations {
 					if i == optionIndex {
@@ -246,7 +244,7 @@ func lineFormEdit(selectedLine string) (form *tview.Form) {
 					}
 				}
 			}).
-		*/
+
 		AddButton("remove step", func() {
 			if removeActionIndex == -1 {
 				return
@@ -254,18 +252,18 @@ func lineFormEdit(selectedLine string) (form *tview.Form) {
 
 			//var newtrf []lineconfig.Step
 
-			/*
+
 				for i, trr := range mt.Steps {
 					if i != removeActionIndex {
 						newtrf = append(newtrf, trr)
 					}
 				}
-			*/
 
-			/*
+
+
 				mt.Steps = newtrf
 				replaceLine(oldName, mt)
-			*/
+
 			pages.SwitchToPage("line")
 			app.SetFocus(pages)
 			app.SetFocus(pagesRight)
@@ -293,7 +291,7 @@ func lineFormEdit(selectedLine string) (form *tview.Form) {
 					}
 				}
 			}).
-		*/
+
 		AddButton("add step", func() {
 			//mt.Steps = append(mt.Steps, tr)
 			//replaceLine(oldName, mt)
@@ -312,7 +310,7 @@ func lineFormEdit(selectedLine string) (form *tview.Form) {
 		})
 
 	form.SetBorder(true).SetTitle(fmt.Sprintf("edit line %#v", selectedLine)).SetTitleAlign(tview.AlignLeft)
-	/*
+
 		form = tview.NewForm()
 		var mt lineconfig.Transform
 		var selected int = -1
@@ -381,7 +379,7 @@ func lineFormEdit(selectedLine string) (form *tview.Form) {
 		})
 		form.SetBorder(true).SetTitle("Edit Transformer").SetTitleAlign(tview.AlignLeft)
 		return form
-	*/
+
 	return form
 }
 
@@ -392,3 +390,4 @@ func lineForm(selectedLine string) (form *tview.Form) {
 	}
 	return lineFormEdit(selectedLine)
 }
+*/

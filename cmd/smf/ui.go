@@ -22,5 +22,5 @@ func (c *_ui) init() {
 }
 
 func (c *_ui) show() error {
-	return ui.StartUI(c.file.Get())
+	return ui.New(c.file.Get()).Run()
 }

@@ -13,21 +13,6 @@ import (
 	"github.com/rivo/tview"
 )
 
-func getUint8(s string) (val uint8, ok bool) {
-	i, err := strconv.Atoi(s)
-	if err != nil {
-		ok = false
-		return
-	}
-	if i < 0 || i > 127 {
-		ok = false
-		return
-	}
-	val = uint8(i)
-	ok = true
-	return
-}
-
 func (n *EditForm) addProgramFields(v meta.Program) {
 	n.AddInputField("text", printv(v.Text()), 300, func(textToCheck string, lastChar rune) bool {
 		return true
@@ -315,10 +300,6 @@ func (n *EditForm) addCCFields(v channel.ControlChange) {
 	})
 }
 
-func printv(v interface{}) string {
-	return fmt.Sprintf("%v", v)
-}
-
 func (n *EditForm) addNoteOffFields(v channel.NoteOff) {
 	/*
 		n.AddInputField("channel", printv(v.Channel()), 2, func(textToCheck string, lastChar rune) bool {
@@ -408,11 +389,6 @@ func newMessageSelect() *messageSelect {
 	return &s
 
 	//l.GetCurrentItem()
-}
-
-func selectednewMessage(ch uint8, m *messageSelect) midi.Message {
-	ms, _ := m.GetItemText(m.GetCurrentItem())
-	return newMessageInTrack(ch, ms)
 }
 
 func NewEditForm(msg midi.Message, saveCb func(m midi.Message), cancelCb func()) *EditForm {

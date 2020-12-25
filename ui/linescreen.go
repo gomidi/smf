@@ -1,13 +1,9 @@
 package ui
 
-import (
-	"fmt"
-	"sort"
+//	"github.com/gdamore/tcell/v2"
+//	"github.com/rivo/tview"
 
-	"github.com/gdamore/tcell/v2"
-	"github.com/rivo/tview"
-)
-
+/*
 type lineScreen struct {
 	*tview.Box
 	currentLine int
@@ -61,7 +57,7 @@ func (m *lineScreen) Draw(screen tcell.Screen) {
 		line := fmt.Sprintf(`%s %s`, radioButton, option)
 		tview.Print(screen, line, x+2, y+index+1, width, tview.AlignLeft, tcell.ColorYellow)
 	}
-	/*
+
 		for index, option := range r.options {
 			if index >= height {
 				break
@@ -73,7 +69,7 @@ func (m *lineScreen) Draw(screen tcell.Screen) {
 			line := fmt.Sprintf(`%s[white]  %s`, radioButton, option)
 			tview.Print(screen, line, x, y+index, width, tview.AlignLeft, tcell.ColorYellow)
 		}
-	*/
+
 }
 
 // InputHandler returns the handler for this primitive.
@@ -102,7 +98,7 @@ func (m *lineScreen) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 				m.currentLine = len(m.lines) - 1
 			}
 			m.showForm()
-			/*
+
 				case tcell.KeyTab:
 					mt := ""
 					if m.currentStack >= 0 {
@@ -110,7 +106,8 @@ func (m *lineScreen) InputHandler() func(event *tcell.EventKey, setFocus func(p 
 					}
 					_ = mt
 					//			changeScreen(stackForm(mt))
-			*/
+
 		}
 	})
 }
+*/
