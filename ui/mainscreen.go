@@ -235,11 +235,11 @@ type mainScreen struct {
 	cols          int
 	colLeftOffset int
 	lines         int
-	ui            *UI
+	ui            *App
 	//proxy         *midiproxy.Proxy
 }
 
-func (sc *mainScreen) insertMessageFunc(row int, column int) {
+func (sc *mainScreen) replaceMessage() {
 	/*
 		for c := 0; c < sc.cols; c++ {
 			sc.Table.GetCell(sc.selectedLine, c).SetBackgroundColor(tcell.ColorBlack)
@@ -248,6 +248,8 @@ func (sc *mainScreen) insertMessageFunc(row int, column int) {
 			sc.Table.GetCell(row, c).SetBackgroundColor(tcell.ColorRed)
 		}
 	*/
+
+	row, column := sc.Table.GetSelection()
 
 	//println("selectedFuncCalled")
 	//fmt.Print("getting ref")
@@ -304,7 +306,8 @@ func (sc *mainScreen) insertMessageFunc(row int, column int) {
 
 }
 
-func (sc *mainScreen) deleteMessage(row int, column int) {
+func (sc *mainScreen) deleteMessage() {
+	row, column := sc.Table.GetSelection()
 	cell := sc.Table.GetCell(row, column)
 	ref := cell.GetReference()
 	//panic(ref)
@@ -321,7 +324,8 @@ func (sc *mainScreen) deleteMessage(row int, column int) {
 	sc.Select(row, column)
 }
 
-func (sc *mainScreen) copyCell(row int, column int) {
+func (sc *mainScreen) copyCell() {
+	row, column := sc.Table.GetSelection()
 	cell := sc.Table.GetCell(row, column)
 	ref := cell.GetReference()
 	//panic(ref)
@@ -336,7 +340,8 @@ func (sc *mainScreen) copyCell(row int, column int) {
 	sc.Select(row, column)
 }
 
-func (sc *mainScreen) pasteCell(row int, column int) {
+func (sc *mainScreen) pasteCell() {
+	row, column := sc.Table.GetSelection()
 	cell := sc.Table.GetCell(row, column)
 	ref := cell.GetReference()
 	//panic(ref)
@@ -387,7 +392,7 @@ func (sc *mainScreen) pasteCell(row int, column int) {
 	sc.Select(row, column)
 }
 
-func (sc *mainScreen) selectedFunc(row int, column int) {
+func (sc *mainScreen) enterCell(setFocus func(p tview.Primitive)) {
 	/*
 		for c := 0; c < sc.cols; c++ {
 			sc.Table.GetCell(sc.selectedLine, c).SetBackgroundColor(tcell.ColorBlack)
@@ -398,6 +403,7 @@ func (sc *mainScreen) selectedFunc(row int, column int) {
 	*/
 
 	//println("selectedFuncCalled")
+	row, column := sc.Table.GetSelection()
 
 	cell := sc.Table.GetCell(row, column)
 	ref := cell.GetReference()
@@ -413,45 +419,62 @@ func (sc *mainScreen) selectedFunc(row int, column int) {
 
 				ch := sc.ui.song.Tracks[ms.TrackNo].Channel
 				if ch >= 0 {
-					var msg midi.Message
-					var pmsg = &msg
+					//var msg midi.Message
+					//var pmsg = &msg
+					fm := newEditLayout(uint8(ch), func(msg midi.Message) {
+						ms.Message = msg
+						cell.SetReference(ms)
+						cell.SetText(sc.showMessage(msg))
+						//sc.refresh()
 
-					fm := tview.NewForm()
-					fm.AddDropDown("new message", _messagesSelect, 0, func(opt string, idx int) {
-						*pmsg = newMessageInTrack(uint8(ch), opt)
-					})
-					fm.AddButton("ok", func() {
-						//fmt.Print("[red]" + (*pmsg).String())
-						//tm.Message = *pmsg
-						//changeScreen(layout)
-						//app.SetFocus(pages)
-						//inModal = false
-						//cell.SetReference(tm)
-						//cell.SetText(showMessage(*pmsg))
-
-						_fm := NewEditForm(*pmsg, func(msg midi.Message) {
-							ms.Message = msg
-							cell.SetReference(ms)
-							cell.SetText(sc.showMessage(msg))
-							//sc.refresh()
-
-							sc.ui.backToTableScreen()
-							sc.Select(row, column)
-						}, func() {
-							sc.ui.backToTableScreen()
-							sc.Select(row, column)
-						})
-						fm.Blur()
-						sc.ui.changeScreen(_fm)
-					})
-
-					fm.AddButton("cancel", func() {
 						sc.ui.backToTableScreen()
 						sc.Select(row, column)
-					})
+					}, func() {
+						sc.ui.backToTableScreen()
+						sc.Select(row, column)
+					}, setFocus)
 
 					sc.ui.inModal = true
 					sc.ui.changeScreen(fm)
+
+					/*
+						fm := tview.NewForm()
+						fm.AddDropDown("new message", _messagesSelect, 0, func(opt string, idx int) {
+							*pmsg = newMessageInTrack(uint8(ch), opt)
+						})
+						fm.AddButton("ok", func() {
+							//fmt.Print("[red]" + (*pmsg).String())
+							//tm.Message = *pmsg
+							//changeScreen(layout)
+							//app.SetFocus(pages)
+							//inModal = false
+							//cell.SetReference(tm)
+							//cell.SetText(showMessage(*pmsg))
+
+							_fm := NewEditForm(*pmsg, func(msg midi.Message) {
+								ms.Message = msg
+								cell.SetReference(ms)
+								cell.SetText(sc.showMessage(msg))
+								//sc.refresh()
+
+								sc.ui.backToTableScreen()
+								sc.Select(row, column)
+							}, func() {
+								sc.ui.backToTableScreen()
+								sc.Select(row, column)
+							})
+							fm.Blur()
+							sc.ui.changeScreen(_fm)
+						})
+
+						fm.AddButton("cancel", func() {
+							sc.ui.backToTableScreen()
+							sc.Select(row, column)
+						})
+
+						sc.ui.inModal = true
+						sc.ui.changeScreen(fm)
+					*/
 				}
 			} else {
 				fm := NewEditForm(ms.Message, func(msg midi.Message) {
@@ -593,9 +616,9 @@ func (sc *mainScreen) selectLine() {
 	*/
 }
 
-func (u *UI) newRunnerScreen() *mainScreen {
+func (u *App) newRunnerScreen() *mainScreen {
 	sc := &mainScreen{}
-	u.runScreen = sc
+	u.mainScreen = sc
 	sc.ui = u
 	sc.chosenInport = nil
 	sc.chosenOutport = nil

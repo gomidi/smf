@@ -31,6 +31,8 @@ gitlab.com/gomidi/rtmididrv v0.9.3/go.mod h1:Tm1+gEkKGIvMCTieUc0WcZU3BqYyzwEmnWD
 gitlab.com/gomidi/rtmididrv/imported/rtmidi v0.0.0-20191025100939-514fe0ed97a6/go.mod h1:FYVFN2H23IsX56VntiDF9DgCIekHh359wW+iMl1W8rQ=
 gitlab.com/metakeule/config v1.15.5 h1:vrVMpAX9YUIB4EFys3ELhCDvr1Uukf6ORdDaXdRBe+E=
 gitlab.com/metakeule/config v1.15.5/go.mod h1:cf4RRJmasbQ5/lXkTJQnqCiJ2MC9ShDS6EsBrA9ni74=
+gitlab.com/metakeule/config v1.15.7 h1:SfH1TaQhMcAmo0i19Z/3DTpu+Bmgcl9/6eodwZOiCps=
+gitlab.com/metakeule/config v1.15.7/go.mod h1:cf4RRJmasbQ5/lXkTJQnqCiJ2MC9ShDS6EsBrA9ni74=
 gitlab.com/metakeule/fmtdate v1.2.0 h1:MCtqJiTO3j8yTn28aJvgvQy63f1DsjTj702f7TGaFOk=
 gitlab.com/metakeule/fmtdate v1.2.0/go.mod h1:uZUf21xepWGLp6PgJGBbHeBVWO+/gsKi3Gdh0Fu4lGg=
 golang.org/x/sys v0.0.0-20190626150813-e07cf5db2756/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=

@@ -381,12 +381,15 @@ var _messagesSelect = []string{
 func newMessageSelect() *messageSelect {
 	var s messageSelect
 	s.List = tview.NewList()
-
-	for _, m := range _messagesSelect {
-		s.AddItem(m, "", rune(m[0]+m[1]), nil)
-	}
-
 	return &s
+
+	//l.GetCurrentItem()
+}
+
+func (ms *messageSelect) AddItems(selected func()) {
+	for _, m := range _messagesSelect {
+		ms.AddItem(m, "", rune(m[0]+m[1]), selected)
+	}
 
 	//l.GetCurrentItem()
 }
