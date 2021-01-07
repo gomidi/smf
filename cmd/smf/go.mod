@@ -7,7 +7,7 @@ require (
 	gitlab.com/gomidi/rtmididrv v0.9.3
 	gitlab.com/gomidi/smf v0.0.7
 	gitlab.com/gomidi/smf/ui v0.0.7
-	gitlab.com/metakeule/config v1.15.7
+	gitlab.com/metakeule/config v1.18.1
 )
 
 replace gitlab.com/gomidi/smf => ../../
