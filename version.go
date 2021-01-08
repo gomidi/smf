@@ -1,2 +1,2 @@
 package smf
-const VERSION="0.0.11"
+const VERSION="0.1.0"
