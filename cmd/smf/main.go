@@ -9,6 +9,7 @@ import (
 )
 
 var CONFIG = MustNew("smf", smf.VERSION, "tools to deal with SMF/MIDI files")
+var FILE = CONFIG.LastString("midifile", "the midi file in question")
 
 func main() {
 	err := run()

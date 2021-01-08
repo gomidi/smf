@@ -19,8 +19,8 @@ type printer struct {
 }
 
 func (p *printer) init() {
-	p.Config = CONFIG.MustCommand("printer", "print smf (pre ui for debugging)")
-	p.srcFile = p.NewString("file", "source file", config.Shortflag('f'), config.Required)
+	p.Config = CONFIG.MustCommand("printer", "print smf (pre ui for debugging)").Skip("midifile")
+	p.srcFile = p.LastString("midifile", "source file", config.Required)
 }
 
 func (p *printer) print() error {

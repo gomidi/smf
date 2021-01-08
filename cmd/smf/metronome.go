@@ -26,8 +26,8 @@ type metro struct {
 }
 
 func (s *metro) init() {
-	s.Config = CONFIG.MustCommand("metro", "set the tempo by analysing the beats inside a metronome track")
-	s.srcFile = s.NewString("file", "source file", config.Shortflag('f'), config.Required)
+	s.Config = CONFIG.MustCommand("metro", "set the tempo by analysing the beats inside a metronome track").Skip("midifile")
+	s.srcFile = s.LastString("midifile", "source file", config.Required)
 	s.destFile = s.NewString("out", "output file", config.Shortflag('o'))
 	s.trackNo = s.NewInt32("track", "track no where only the metronome beats reside", config.Shortflag('t'), config.Default(int32(0)), config.Required)
 	s.typ = s.NewString("mtype", "type of the metronome beats; available types are: 'no' (NoteOn), 'cc' (ControlChange), 'at' (Aftertouch), 'pa' (Polyaftertouch), 'pb' (PitchBend)", config.Default("no"))

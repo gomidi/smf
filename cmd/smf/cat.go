@@ -21,8 +21,8 @@ type cat struct {
 }
 
 func (c *cat) init() {
-	c.Config = CONFIG.MustCommand("cat", "cat shows the content of an SMF (MIDI) file")
-	c.file = c.NewString("file", "path of the midi file", config.Shortflag('f'), config.Required)
+	c.Config = CONFIG.MustCommand("cat", "cat shows the content of an SMF (MIDI) file").Skip("midifile")
+	c.file = c.LastString("midifile", "the midi file that should be shown", config.Required)
 }
 
 func (c *cat) print() error {

@@ -23,8 +23,8 @@ type lyr struct {
 }
 
 func (c *lyr) init() {
-	c.Config = CONFIG.MustCommand("lyrics", "extracts lyrics from a SMF file, tracks are separated by an empty line")
-	c.file = c.NewString("file", "the SMF file that is read", config.Shortflag('f'), config.Required)
+	c.Config = CONFIG.MustCommand("lyrics", "extracts lyrics from a SMF file, tracks are separated by an empty line").Skip("midifile")
+	c.file = c.LastString("file", "the SMF file", config.Required)
 	c.track = c.NewInt32(
 		"track",
 		"the track from which the lyrics are taken. -1 means all tracks, 0 is the first, 1 the second etc",
